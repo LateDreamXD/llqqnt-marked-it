@@ -10,12 +10,6 @@ import { marked } from 'marked';
 import katex from 'marked-katex-extension';
 
 const options = reactive(defaultOptions);
-LiteLoader.api.config.get('marked-it', defaultOptions).then(config => {
-	Object.assign(options, config);
-}).then(() => {
-	marked.use(options.marked);
-	marked.use(katex(options.katex));
-});
 
 export const onSettingWindowCreated = (view: HTMLDivElement) => {
 	// 初始化 LiteLoader 设置页
@@ -49,12 +43,20 @@ const debounceRender = debounce(() => {
 			el.classList.contains(options.plugin.ignoredClass)
 		) return;
 		try {
-			el.setAttribute('data-raw', el.innerHTML);
-			const parsed = marked.parse(el.innerHTML) as string;
+			// @ts-ignore
+			el.style.backgroundColor = 'transparent';
+			if(el.querySelector('.pic-element') && el.children.length === 1)
+				return;
+			const reply = el.querySelector('.reply-content');
+			const raw = reply? reply.innerHTML.replace(/<.*?>/g, ''):
+				el.innerHTML.replace(/<.*?>/g, '');
+			el.setAttribute('data-raw', raw);
+			const parsed = marked.parse(raw) as string;
 			el.setAttribute('data-parsed', parsed);
-			el.innerHTML = parsed;
+			reply? reply.innerHTML = parsed: el.innerHTML = parsed;
 			if(options.plugin.handleAnchorClick)
 				el.querySelectorAll('a').forEach(a => {
+					a.style.color = '#00bbff';
 					a.addEventListener('click', (e) => {
 						e.preventDefault();
 						a.href && LiteLoader.api.openExternal(a.href);
@@ -87,7 +89,8 @@ const debounceRender = debounce(() => {
 });
 
 const init = () => {
-	const root = LiteLoader.plugins['marked-it'].path.plugin;
+	const root = LiteLoader.plugins['marked-it'].path.plugin.replace(/\\/g, '/');
+	loadCSS(`local:///${root}/node_modules/github-markdown-css/github-markdown.css`);
 	loadCSS(`local:///${root}/node_modules/katex/dist/katex.min.css`);
 
 	const observer = new MutationObserver((mutations) => {
@@ -99,7 +102,7 @@ const init = () => {
 	});
 	observer.observe(document.body, { childList: true, subtree: true });
 
-	console.log('[marked-it] initialized');
+	console.log('[marked-it] initialized, config:', options);
 }
 
 const onHashChange = () => {
@@ -117,4 +120,10 @@ const onHashChange = () => {
 	}
 }
 
-onHashChange();
+LiteLoader.api.config.get('marked-it', defaultOptions).then(config => {
+	Object.assign(options, config);
+}).then(() => {
+	marked.use(options.marked);
+	marked.use(katex(options.katex));
+	onHashChange();
+});
