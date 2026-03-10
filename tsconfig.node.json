@@ -4,10 +4,12 @@
     "composite": true,
     "target": "es2015",
     "module": "nodenext",
+    "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
   },
   "include": [
+    "tsdown.config.ts",
     ".quiltnt/**/*",
     "src/main/**/*",
     "src/preload/**/*",

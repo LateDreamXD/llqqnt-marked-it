@@ -1,27 +1,27 @@
-const { defineConfig } = require('tsdown');
+import { defineConfig } from 'tsdown';
+import vue from 'unplugin-vue/rolldown';
+import vueConfig from '@llqqntuno/liteloader-web-components-types/vue-conf';
 
-module.exports = defineConfig({
-	// 外部依赖, 防止被 tsdown 打包
-	external: ['electron'],
+export default defineConfig({
+	deps: {
+		neverBundle: ['electron']
+	},
 
 	entry: {
-		main: 'src/main/index.ts',
-		preload: 'src/preload/index.ts',
 		renderer: 'src/renderer/index.ts'
 	},
 	format: {
-		cjs: {
-			entry: {
-				main: 'src/main/index.ts',
-				preload: 'src/preload/index.ts'
-			},
-			platform: 'node',
-			target: ['node22']
-		},
 		esm: {
 			entry: {
 				renderer: 'src/renderer/index.ts'
 			},
+			plugins: [vue({
+				template: {
+					compilerOptions: {
+						...vueConfig,
+					}
+				}
+			})],
 			platform: 'browser',
 			target: ['es2022']
 		}

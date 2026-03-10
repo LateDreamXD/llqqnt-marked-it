@@ -50,3 +50,18 @@ if(fs.existsSync(distDir)) {
 		console.error('❌  插件静态资源复制失败', error);
 	}
 } else console.warn('⚠️  未检测到 dist 目录, 跳过生成插件清单');
+
+try {
+	console.log('ℹ️  开始复制插件依赖');
+	const timer = Date.now();
+	Object.keys(packageJson.dependencies).forEach(dep => {
+		fs.cpSync(
+			path.join(cwd, 'node_modules', dep),
+			path.join(distDir, 'node_modules', dep),
+			{recursive: true}
+		);
+	});
+	console.log(`✅  插件依赖复制成功, 耗时 ${Date.now() - timer}ms`);
+} catch (error) {
+	console.error('❌  插件依赖复制失败', error);
+}

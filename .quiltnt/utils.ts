@@ -40,11 +40,11 @@ function generateInjects(packageJson: typeof import('../package.json')) {
 	if(packageJson.quiltnt.manifest.injects !== 'tsdown')
 		return packageJson.quiltnt.manifest.injects;
 	return {
-		main: Object.keys(tsdown_config.format?.cjs.entry || {}).find(key => key === 'main')?
+		main: Object.keys(tsdown_config.format?.cjs?.entry || {}).find(key => key === 'main')?
 			  './main.cjs': null,
-		preload: Object.keys(tsdown_config.format?.cjs.entry || {}).find(key => key === 'preload')?
+		preload: Object.keys(tsdown_config.format?.cjs?.entry || {}).find(key => key === 'preload')?
 				 './preload.cjs': null,
-		renderer: Object.keys(tsdown_config.format?.esm.entry || {}).find(key => key === 'renderer')?
+		renderer: Object.keys(tsdown_config.format?.esm?.entry || {}).find(key => key === 'renderer')?
 				  './renderer.mjs': null,
 	}
 }

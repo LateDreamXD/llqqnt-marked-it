@@ -11,17 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: latest
-          run_install: |
-            - args: [ '--frozen-lockfile' ]
       - uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
           node-version: lts/*
-      - name: Build test
-        run: pnpm build
+      - name: install deps and build
+        run: |
+          npm install
+          npm run build
       - uses: actions/upload-artifact@v6
         with:
           path: dist/*

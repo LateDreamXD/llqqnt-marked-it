@@ -7,8 +7,15 @@
     "moduleResolution": "bundler",
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "lib": ["esnext", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@package": ["package.json"],
+      "@/*": ["src/renderer/*"]
+    }
   },
   "include": [
+    "package.json",
     "src/preload/**/*",
     "src/renderer/**/*",
     "src/types/**/*"

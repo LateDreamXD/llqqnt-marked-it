@@ -1,18 +1,18 @@
 {
   "$schema": ".quiltnt/package.schema.json",
-  "name": "quilt-exclusive-plugin-template",
+  "name": "llqqnt-marked-it",
   "private": true,
   "version": "0.1.0",
-  "description": "QuiltNt 专用 LiteLoaderQQNT 插件模板",
+  "description": "为 QQNT 提供更轻量的 Markdown 渲染",
   "quiltnt": {
     "manifest": {
       "manifest_version": 4,
       "type": "extension",
-      "name": null,
-      "slug": null,
+      "name": "Marked It",
+      "slug": "marked-it",
       "version": null,
       "description": null,
-      "icon": null,
+      "icon": "./icon.svg",
       "thumb": null,
       "authors": [],
       "platform": [
@@ -30,26 +30,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/QuiltNT/exclusive_plugin_template.git"
+    "url": "https://github.com/LateDreamXD/llqqnt-marked-it.git"
   },
-  "author": "QuiltNT (https://github.com/QuiltNT)",
-  "contributors": [
-    {
-      "name": "晚梦",
-      "email": "xiaozhisans@qq.com",
-      "url": "https://about.latedream.cn"
-    }
-  ],
-  "license": "",
+  "author": "晚梦 (https://github.com/LateDreamXD)",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/QuiltNT/exclusive_plugin_template/issues"
+    "url": "https://github.com/LateDreamXD/llqqnt-marked-it/issues"
   },
-  "homepage": "https://github.com/QuiltNT/exclusive_plugin_template#readme",
+  "homepage": "https://github.com/LateDreamXD/llqqnt-marked-it#readme",
   "devDependencies": {
     "@llqqntuno/liteloader-types": "^1.4.0",
+    "@llqqntuno/liteloader-web-components-types": "^1.4.0",
     "@types/node": "^25.4.0",
     "tsdown": "^0.21.1",
     "typescript": "^5.9.3",
+    "unplugin-vue": "^7.1.1",
     "unrun": "^0.2.31"
+  },
+  "dependencies": {
+    "katex": "^0.16.38",
+    "marked": "^17.0.4",
+    "marked-katex-extension": "^5.1.7",
+    "vue": "^3.5.30"
   }
 }
