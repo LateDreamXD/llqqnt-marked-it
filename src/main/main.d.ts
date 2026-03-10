@@ -1,0 +1,1 @@
+/// <reference types="@llqqntuno/liteloader-types/main" />

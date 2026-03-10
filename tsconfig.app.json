@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "composite": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+  },
+  "include": [
+    "src/preload/**/*",
+    "src/renderer/**/*",
+    "src/types/**/*"
+  ]
+}

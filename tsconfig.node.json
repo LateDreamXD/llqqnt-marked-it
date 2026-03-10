@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "composite": true,
+    "target": "es2015",
+    "module": "nodenext",
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+  },
+  "include": [
+    ".quiltnt/**/*",
+    "src/main/**/*",
+    "src/preload/**/*",
+    "src/types/**/*"
+  ]
+}

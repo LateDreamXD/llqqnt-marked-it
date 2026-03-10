@@ -1,0 +1,1531 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NPM package.json 文件的 JSON 模式",
+  "definitions": {
+    "person": {
+      "description": "参与创建或维护此软件包的人员。",
+      "type": [
+        "object",
+        "string"
+      ],
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      }
+    },
+    "dependency": {
+      "description": "依赖项通过简单的包名到版本范围的哈希映射来指定。版本范围是一个包含一个或多个以空格分隔的描述符的字符串。依赖项也可以通过 tarball 或 git URL 来标识。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "devDependency": {
+      "description": "指定项目开发和测试所需的依赖项。这些依赖项在生产环境中不需要。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "optionalDependency": {
+      "description": "指定对项目可选的依赖项。这些依赖项在 npm install 过程中会尝试安装，但如果安装失败，安装过程不会因此而失败。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "peerDependency": {
+      "description": "指定软件包所需但预期由软件包的使用者提供的依赖项。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "peerDependencyMeta": {
+      "description": "当用户安装你的软件包时，如果“peerDependencies”中指定的包尚未安装，会发出警告。“peerDependenciesMeta”字段用于提供有关如何使用对等依赖项的更多信息。最常见的是，它允许将对等依赖项标记为可选的。此字段的元数据通过简单的包名到元数据对象的哈希映射来指定。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "optional": {
+            "description": "指定此对等依赖项是可选的，不应自动安装。",
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "license": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "enum": [
+            "AGPL-3.0-only",
+            "Apache-2.0",
+            "BSD-2-Clause",
+            "BSD-3-Clause",
+            "BSL-1.0",
+            "CC0-1.0",
+            "CDDL-1.0",
+            "CDDL-1.1",
+            "EPL-1.0",
+            "EPL-2.0",
+            "GPL-2.0-only",
+            "GPL-3.0-only",
+            "ISC",
+            "LGPL-2.0-only",
+            "LGPL-2.1-only",
+            "LGPL-2.1-or-later",
+            "LGPL-3.0-only",
+            "LGPL-3.0-or-later",
+            "MIT",
+            "MPL-2.0",
+            "MS-PL",
+            "UNLICENSED"
+          ]
+        }
+      ]
+    },
+    "scriptsInstallAfter": {
+      "description": "在软件包安装之后运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsPublishAfter": {
+      "description": "在软件包发布之后运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsRestart": {
+      "description": "由 'npm restart' 命令运行。注意：如果没有提供 restart 脚本，'npm restart' 将运行 stop 和 start 脚本。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsStart": {
+      "description": "由 'npm start' 命令运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsStop": {
+      "description": "由 'npm stop' 命令运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsTest": {
+      "description": "由 'npm test' 命令运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsUninstallBefore": {
+      "description": "在软件包卸载之前运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "scriptsVersionBefore": {
+      "description": "在提升软件包版本之前运行。",
+      "type": "string",
+      "x-intellij-language-injection": "Shell Script"
+    },
+    "packageExportsEntryPath": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "导入此说明符时解析的模块路径。设置为 `null` 以禁止导入此模块。",
+      "pattern": "^\\./"
+    },
+    "packageExportsEntryObject": {
+      "type": "object",
+      "description": "用于指定条件导出，请注意旧环境不支持条件导出，因此如果担心对这些环境的支持，建议使用回退数组选项。",
+      "properties": {
+        "require": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当使用 `require(...)` 函数将此说明符作为 CommonJS 模块导入时解析的模块路径。"
+        },
+        "import": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当使用 `import` 声明或动态 `import(...)` 函数将此说明符作为 ECMAScript 模块导入时解析的模块路径。"
+        },
+        "module-sync": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "$comment": "https://nodejs.org/api/packages.html#conditional-exports#:~:text=%22module-sync%22",
+          "description": "与 `import` 相同，但可以在 Node 20+ 中使用 require(esm)。这要求文件不使用任何顶级 await。"
+        },
+        "node": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当环境是 Node.js 时解析的模块路径。"
+        },
+        "default": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当没有其他导出类型匹配时解析的模块路径。"
+        },
+        "types": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当导入此说明符时为 TypeScript 类型解析的模块路径。应列在其他条件之前。此外，支持形式为“types@{selector}”的版本化“types”条件。"
+        }
+      },
+      "patternProperties": {
+        "^[^.0-9]+$": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当环境与属性名称匹配时解析的模块路径。"
+        },
+        "^types@.+$": {
+          "$ref": "#/definitions/packageExportsEntryOrFallback",
+          "description": "当导入此说明符时为 TypeScript 类型解析的模块路径。应列在其他条件之前。此外，支持形式为“types@{selector}”的版本化“types”条件。"
+        }
+      },
+      "additionalProperties": false
+    },
+    "packageExportsEntry": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/packageExportsEntryPath"
+        },
+        {
+          "$ref": "#/definitions/packageExportsEntryObject"
+        }
+      ]
+    },
+    "packageExportsFallback": {
+      "type": "array",
+      "description": "用于在此环境不支持前面的条目时允许回退。",
+      "items": {
+        "$ref": "#/definitions/packageExportsEntry"
+      }
+    },
+    "packageExportsEntryOrFallback": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/packageExportsEntry"
+        },
+        {
+          "$ref": "#/definitions/packageExportsFallback"
+        }
+      ]
+    },
+    "packageImportsEntryPath": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "导入此说明符时解析的模块路径。设置为 `null` 以禁止导入此模块。"
+    },
+    "packageImportsEntryObject": {
+      "type": "object",
+      "description": "用于指定条件导出，请注意旧环境不支持条件导出，因此如果担心对这些环境的支持，建议使用回退数组选项。",
+      "properties": {
+        "require": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当使用 `require(...)` 函数将此说明符作为 CommonJS 模块导入时解析的模块路径。"
+        },
+        "import": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当使用 `import` 声明或动态 `import(...)` 函数将此说明符作为 ECMAScript 模块导入时解析的模块路径。"
+        },
+        "node": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当环境是 Node.js 时解析的模块路径。"
+        },
+        "default": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当没有其他导出类型匹配时解析的模块路径。"
+        },
+        "types": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当导入此说明符时为 TypeScript 类型解析的模块路径。应列在其他条件之前。此外，支持形式为“types@{selector}”的版本化“types”条件。"
+        }
+      },
+      "patternProperties": {
+        "^[^.0-9]+$": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当环境与属性名称匹配时解析的模块路径。"
+        },
+        "^types@.+$": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当导入此说明符时为 TypeScript 类型解析的模块路径。应列在其他条件之前。此外，支持形式为“types@{selector}”的版本化“types”条件。"
+        }
+      },
+      "additionalProperties": false
+    },
+    "packageImportsEntry": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/packageImportsEntryPath"
+        },
+        {
+          "$ref": "#/definitions/packageImportsEntryObject"
+        }
+      ]
+    },
+    "packageImportsFallback": {
+      "type": "array",
+      "description": "用于在此环境不支持前面的条目时允许回退。",
+      "items": {
+        "$ref": "#/definitions/packageImportsEntry"
+      }
+    },
+    "packageImportsEntryOrFallback": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/packageImportsEntry"
+        },
+        {
+          "$ref": "#/definitions/packageImportsFallback"
+        }
+      ]
+    },
+    "fundingUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "有关如何资助此软件包的详细信息的网站 URL。"
+    },
+    "fundingWay": {
+      "type": "object",
+      "description": "用于告知帮助资助软件包开发的方式。",
+      "properties": {
+        "url": {
+          "$ref": "#/definitions/fundingUrl"
+        },
+        "type": {
+          "type": "string",
+          "description": "资助类型或可以提供资助的平台，例如 patreon、opencollective、tidelift 或 github。"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ]
+    },
+    "devEngineDependency": {
+      "description": "指定开发环境组件（如操作系统、运行时或包管理器）的要求。用于确保团队之间开发环境的一致性。",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "依赖项的名称，允许的值取决于父字段"
+        },
+        "version": {
+          "type": "string",
+          "description": "依赖项的版本范围"
+        },
+        "onFail": {
+          "type": "string",
+          "enum": [
+            "ignore",
+            "warn",
+            "error",
+            "download"
+          ],
+          "description": "验证失败时采取的操作"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "patternProperties": {
+    "^_": {
+      "description": "任何以 _ 开头的属性都是有效的。",
+      "tsType": "any"
+    }
+  },
+  "properties": {
+    "name": {
+      "description": "软件包的名称。",
+      "type": "string",
+      "maxLength": 214,
+      "minLength": 1,
+      "pattern": "^(?:(?:@(?:[a-z0-9-*~][a-z0-9-*._~]*)?/[a-z0-9-._~])|[a-z0-9-~])[a-z0-9-._~]*$"
+    },
+    "version": {
+      "description": "版本必须可由 node-semver 解析，node-semver 作为依赖项与 npm 捆绑。",
+      "type": "string"
+    },
+    "description": {
+      "description": "这有助于人们发现你的软件包，因为它列在 'npm search' 中。",
+      "type": "string"
+    },
+    "keywords": {
+      "description": "这有助于人们发现你的软件包，因为它列在 'npm search' 中。",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "homepage": {
+      "description": "项目主页的 URL。",
+      "type": "string"
+    },
+    "bugs": {
+      "description": "项目问题跟踪器的 URL 和/或应报告问题的电子邮件地址。这些对于遇到软件包问题的人很有帮助。",
+      "type": [
+        "object",
+        "string"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "项目问题跟踪器的 URL。",
+          "format": "uri"
+        },
+        "email": {
+          "type": "string",
+          "description": "应报告问题的电子邮件地址。",
+          "format": "email"
+        }
+      }
+    },
+    "license": {
+      "$ref": "#/definitions/license",
+      "description": "你应该为软件包指定一个许可证，以便人们知道他们被允许如何使用它，以及你对其施加的任何限制。"
+    },
+    "licenses": {
+      "description": "已弃用：请改用 SPDX 表达式，例如：{ \"license\": \"ISC\" } 或 { \"license\": \"(MIT OR Apache-2.0)\" } 参见：'https://docs.npmjs.com/files/package.json#license'。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/definitions/license"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    },
+    "author": {
+      "$ref": "#/definitions/person"
+    },
+    "contributors": {
+      "description": "参与此软件包贡献的人员列表。",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/person"
+      }
+    },
+    "maintainers": {
+      "description": "维护此软件包的人员列表。",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/person"
+      }
+    },
+    "files": {
+      "description": "“files”字段是要包含在项目中的文件数组。如果在数组中命名一个文件夹，那么它也会包含该文件夹内的文件。",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "main": {
+      "description": "main 字段是模块 ID，它是程序的主要入口点。",
+      "type": "string"
+    },
+    "exports": {
+      "description": "“exports”字段用于限制对非导出模块文件的外部访问，还允许模块使用“name”导入自身。",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/packageExportsEntryPath",
+          "description": "当模块说明符匹配“name”时解析的模块路径，会遮蔽“main”字段。"
+        },
+        {
+          "type": "object",
+          "properties": {
+            ".": {
+              "$ref": "#/definitions/packageExportsEntryOrFallback",
+              "description": "当模块说明符匹配“name”时解析的模块路径，会遮蔽“main”字段。"
+            }
+          },
+          "patternProperties": {
+            "^\\./.+": {
+              "$ref": "#/definitions/packageExportsEntryOrFallback",
+              "description": "当模块说明符以“name/”开头时解析的模块路径前缀，设置为“./*”以允许外部模块导入任何子路径。"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/definitions/packageExportsEntryObject",
+          "description": "当模块说明符匹配“name”时解析的模块路径，会遮蔽“main”字段。"
+        },
+        {
+          "$ref": "#/definitions/packageExportsFallback",
+          "description": "当模块说明符匹配“name”时解析的模块路径，会遮蔽“main”字段。"
+        }
+      ]
+    },
+    "imports": {
+      "description": "“imports”字段用于创建仅适用于软件包内部导入说明符的私有映射。",
+      "type": "object",
+      "patternProperties": {
+        "^#.+$": {
+          "$ref": "#/definitions/packageImportsEntryOrFallback",
+          "description": "当环境与属性名称匹配时解析的模块路径。"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bin": {
+      "type": [
+        "string",
+        "object"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "type": {
+      "description": "当设置为“module”时，type 字段允许指定包内所有 .js 文件都是 ES 模块。如果省略“type”字段或设置为“commonjs”，则所有 .js 文件都视为 CommonJS。",
+      "type": "string",
+      "enum": [
+        "commonjs",
+        "module"
+      ],
+      "default": "commonjs"
+    },
+    "types": {
+      "description": "将 types 属性指向你捆绑的声明文件。",
+      "type": "string"
+    },
+    "typings": {
+      "description": "请注意，“typings”字段与“types”同义，也可以使用。",
+      "type": "string"
+    },
+    "typesVersions": {
+      "description": "自 TypeScript 3.1 起使用“typesVersions”字段以支持仅在较新 TypeScript 版本中可用的功能。",
+      "type": "object",
+      "additionalProperties": {
+        "description": "包含与属性键匹配的版本范围的 TypeScript 版本的重写。",
+        "type": "object",
+        "properties": {
+          "*": {
+            "description": "将所有文件路径映射到数组中指定的文件路径。",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[^*]*(?:\\*[^*]*)?$"
+            }
+          }
+        },
+        "patternProperties": {
+          "^[^*]+$": {
+            "description": "将与属性键匹配的文件路径映射到数组中指定的文件路径。",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "^[^*]*\\*[^*]*$": {
+            "description": "将匹配属性键中指定模式的文件路径映射到数组中指定的文件路径。",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[^*]*(?:\\*[^*]*)?$"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "man": {
+      "type": [
+        "array",
+        "string"
+      ],
+      "description": "指定单个文件或文件名数组，供 man 程序查找。",
+      "items": {
+        "type": "string"
+      }
+    },
+    "directories": {
+      "type": "object",
+      "properties": {
+        "bin": {
+          "description": "如果指定了 'bin' 目录，则该文件夹中的所有文件都将用作 'bin' 哈希。",
+          "type": "string"
+        },
+        "doc": {
+          "description": "将 markdown 文件放在这里。最终，这些文件可能会很好地显示出来，也许在将来的某一天。",
+          "type": "string"
+        },
+        "example": {
+          "description": "将示例脚本放在这里。也许有一天会以某种巧妙的方式公开。",
+          "type": "string"
+        },
+        "lib": {
+          "description": "告诉人们你的库的主要部分在哪里。lib 文件夹没有任何特殊处理，但这是有用的元信息。",
+          "type": "string"
+        },
+        "man": {
+          "description": "充满手册页的文件夹。通过遍历文件夹生成 'man' 数组的简便方法。",
+          "type": "string"
+        },
+        "test": {
+          "type": "string"
+        }
+      }
+    },
+    "repository": {
+      "description": "指定代码存放的位置。这对想要贡献的人很有帮助。",
+      "type": [
+        "object",
+        "string"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "directory": {
+          "type": "string"
+        }
+      }
+    },
+    "funding": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/fundingUrl"
+        },
+        {
+          "$ref": "#/definitions/fundingWay"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/fundingUrl"
+              },
+              {
+                "$ref": "#/definitions/fundingWay"
+              }
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      ]
+    },
+    "scripts": {
+      "description": "“scripts”成员是在软件包生命周期中不同时间运行的脚本命令的对象哈希。键是生命周期事件，值是在该点运行的命令。",
+      "type": "object",
+      "properties": {
+        "lint": {
+          "type": "string",
+          "description": "运行代码质量工具，例如 ESLint、TSLint 等。"
+        },
+        "prepublish": {
+          "type": "string",
+          "description": "在软件包发布之前运行（也在本地 npm install 没有任何参数时运行）。"
+        },
+        "prepare": {
+          "type": "string",
+          "description": "在软件包打包之前运行，即在“npm publish”和“npm pack”期间，以及本地“npm install”没有任何参数时运行。这在“prepublish”之后运行，但在“prepublishOnly”之前。"
+        },
+        "prepublishOnly": {
+          "type": "string",
+          "description": "仅在 npm publish 时，在软件包准备和打包之前运行。"
+        },
+        "prepack": {
+          "type": "string",
+          "description": "在 tarball 打包之前运行（在 npm pack、npm publish 以及安装 git 依赖项时）。"
+        },
+        "postpack": {
+          "type": "string",
+          "description": "在 tarball 生成并移动到其最终目的地之后运行。"
+        },
+        "publish": {
+          "type": "string",
+          "description": "将软件包发布到注册表，以便可以按名称安装。参见 https://docs.npmjs.com/cli/v8/commands/npm-publish"
+        },
+        "postpublish": {
+          "$ref": "#/definitions/scriptsPublishAfter"
+        },
+        "preinstall": {
+          "type": "string",
+          "description": "在软件包安装之前运行。"
+        },
+        "install": {
+          "$ref": "#/definitions/scriptsInstallAfter"
+        },
+        "postinstall": {
+          "$ref": "#/definitions/scriptsInstallAfter"
+        },
+        "preuninstall": {
+          "$ref": "#/definitions/scriptsUninstallBefore"
+        },
+        "uninstall": {
+          "$ref": "#/definitions/scriptsUninstallBefore"
+        },
+        "postuninstall": {
+          "type": "string",
+          "description": "在软件包卸载之后运行。"
+        },
+        "preversion": {
+          "$ref": "#/definitions/scriptsVersionBefore"
+        },
+        "version": {
+          "$ref": "#/definitions/scriptsVersionBefore"
+        },
+        "postversion": {
+          "type": "string",
+          "description": "在提升软件包版本之后运行。"
+        },
+        "pretest": {
+          "$ref": "#/definitions/scriptsTest"
+        },
+        "test": {
+          "$ref": "#/definitions/scriptsTest"
+        },
+        "posttest": {
+          "$ref": "#/definitions/scriptsTest"
+        },
+        "prestop": {
+          "$ref": "#/definitions/scriptsStop"
+        },
+        "stop": {
+          "$ref": "#/definitions/scriptsStop"
+        },
+        "poststop": {
+          "$ref": "#/definitions/scriptsStop"
+        },
+        "prestart": {
+          "$ref": "#/definitions/scriptsStart"
+        },
+        "start": {
+          "$ref": "#/definitions/scriptsStart"
+        },
+        "poststart": {
+          "$ref": "#/definitions/scriptsStart"
+        },
+        "prerestart": {
+          "$ref": "#/definitions/scriptsRestart"
+        },
+        "restart": {
+          "$ref": "#/definitions/scriptsRestart"
+        },
+        "postrestart": {
+          "$ref": "#/definitions/scriptsRestart"
+        },
+        "serve": {
+          "type": "string",
+          "description": "启动开发服务器以提供应用程序文件"
+        }
+      },
+      "additionalProperties": {
+        "type": "string",
+        "tsType": "string | undefined",
+        "x-intellij-language-injection": "Shell Script"
+      }
+    },
+    "config": {
+      "description": "“config”哈希可用于设置在软件包脚本中使用且在升级后持续存在的配置参数。",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "dependencies": {
+      "$ref": "#/definitions/dependency"
+    },
+    "devDependencies": {
+      "$ref": "#/definitions/devDependency"
+    },
+    "optionalDependencies": {
+      "$ref": "#/definitions/optionalDependency"
+    },
+    "peerDependencies": {
+      "$ref": "#/definitions/peerDependency"
+    },
+    "peerDependenciesMeta": {
+      "$ref": "#/definitions/peerDependencyMeta"
+    },
+    "bundleDependencies": {
+      "description": "发布软件包时将捆绑的软件包名称数组。",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "bundledDependencies": {
+      "description": "已弃用：此字段会被尊重，但“bundleDependencies”是正确的字段名称。",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "resolutions": {
+      "description": "Resolutions 用于使用 yarn 支持选择性版本解析，这允许你在依赖项内定义自定义包版本或范围。对于 npm，请改用 overrides。参见：https://yarnpkg.com/configuration/manifest#resolutions",
+      "type": "object"
+    },
+    "overrides": {
+      "description": "Overrides 用于使用 npm 支持选择性版本覆盖，这允许你在依赖项内定义自定义包版本或范围。对于 yarn，请改用 resolutions。参见：https://docs.npmjs.com/cli/v9/configuring-npm/package-json#overrides",
+      "type": "object"
+    },
+    "packageManager": {
+      "description": "定义在处理当前项目时预期使用哪个包管理器。此字段目前是实验性的，需要选择加入；参见 https://nodejs.org/api/corepack.html",
+      "type": "string",
+      "pattern": "(npm|pnpm|yarn|bun)@\\d+\\.\\d+\\.\\d+(-.+)?"
+    },
+    "engines": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "volta": {
+      "description": "定义安装 Volta 时预期使用的工具和版本。",
+      "type": "object",
+      "properties": {
+        "extends": {
+          "description": "该条目的值应为另一个也具有“volta”部分的 JSON 文件的路径",
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "(node|npm|pnpm|yarn)": {
+          "type": "string"
+        }
+      }
+    },
+    "engineStrict": {
+      "type": "boolean"
+    },
+    "os": {
+      "description": "指定你的模块将在哪些操作系统上运行。",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cpu": {
+      "description": "指定你的代码仅在特定的 CPU 架构上运行。",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "devEngines": {
+      "description": "定义当前项目开发所需的运行时和包管理器。",
+      "type": "object",
+      "properties": {
+        "os": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/devEngineDependency"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/devEngineDependency"
+              }
+            }
+          ],
+          "description": "指定开发支持的操作系统"
+        },
+        "cpu": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/devEngineDependency"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/devEngineDependency"
+              }
+            }
+          ],
+          "description": "指定开发支持的 CPU 架构"
+        },
+        "libc": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/devEngineDependency"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/devEngineDependency"
+              }
+            }
+          ],
+          "description": "指定开发支持的 C 标准库"
+        },
+        "runtime": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/devEngineDependency"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/devEngineDependency"
+              }
+            }
+          ],
+          "description": "指定开发支持的 JavaScript 运行时（如 Node.js、Deno、Bun）。值应使用 WinterCG 运行时键（参见 https://runtime-keys.proposal.wintercg.org/）"
+        },
+        "packageManager": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/devEngineDependency"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/devEngineDependency"
+              }
+            }
+          ],
+          "description": "指定开发支持的包管理器"
+        }
+      }
+    },
+    "preferGlobal": {
+      "type": "boolean",
+      "description": "已弃用：此选项过去会触发 npm 警告，但不再警告。它纯粹是为了提供信息。现在建议尽可能将任何二进制文件作为本地 devDependencies 安装。"
+    },
+    "private": {
+      "description": "如果设置为 true，则 npm 将拒绝发布它。",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "enum": [
+            "false",
+            "true"
+          ]
+        }
+      ]
+    },
+    "publishConfig": {
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string",
+          "enum": [
+            "public",
+            "restricted"
+          ]
+        },
+        "tag": {
+          "type": "string"
+        },
+        "registry": {
+          "type": "string",
+          "format": "uri"
+        },
+        "provenance": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "dist": {
+      "type": "object",
+      "properties": {
+        "shasum": {
+          "type": "string"
+        },
+        "tarball": {
+          "type": "string"
+        }
+      }
+    },
+    "readme": {
+      "type": "string"
+    },
+    "module": {
+      "description": "作为程序主要入口点的 ECMAScript 模块 ID。",
+      "type": "string"
+    },
+    "esnext": {
+      "description": "包含未转译代码的模块 ID，作为程序的主要入口点。",
+      "type": [
+        "string",
+        "object"
+      ],
+      "properties": {
+        "main": {
+          "type": "string"
+        },
+        "browser": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "workspaces": {
+      "description": "允许目录内的软件包使用本地文件的直接链接相互依赖。此外，工作区内的依赖项在可能的情况下会被提升到工作区根目录以减少重复。注意：使用此功能时，最好将“private”设置为 true。",
+      "anyOf": [
+        {
+          "type": "array",
+          "description": "工作区软件包路径。支持通配符模式。",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "packages": {
+              "type": "array",
+              "description": "工作区软件包路径。支持通配符模式。",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nohoist": {
+              "type": "array",
+              "description": "阻止提升到工作区根目录的软件包。目前仅在 Yarn 中支持。",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "jspm": {
+      "$ref": "#"
+    },
+    "eslintConfig": {
+      "$ref": "https://json.schemastore.org/eslintrc.json"
+    },
+    "prettier": {
+      "$ref": "https://json.schemastore.org/prettierrc.json"
+    },
+    "stylelint": {
+      "$ref": "https://json.schemastore.org/stylelintrc.json"
+    },
+    "ava": {
+      "$ref": "https://json.schemastore.org/ava.json"
+    },
+    "release": {
+      "$ref": "https://json.schemastore.org/semantic-release.json"
+    },
+    "jscpd": {
+      "$ref": "https://json.schemastore.org/jscpd.json"
+    },
+    "pnpm": {
+      "description": "定义 pnpm 特定配置。",
+      "type": "object",
+      "properties": {
+        "overrides": {
+          "description": "用于覆盖依赖关系图中的任何依赖项。",
+          "type": "object"
+        },
+        "packageExtensions": {
+          "description": "用于通过附加信息扩展现有的包定义。",
+          "type": "object",
+          "patternProperties": {
+            "^.+$": {
+              "type": "object",
+              "properties": {
+                "dependencies": {
+                  "$ref": "#/definitions/dependency"
+                },
+                "optionalDependencies": {
+                  "$ref": "#/definitions/optionalDependency"
+                },
+                "peerDependencies": {
+                  "$ref": "#/definitions/peerDependency"
+                },
+                "peerDependenciesMeta": {
+                  "$ref": "#/definitions/peerDependencyMeta"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "peerDependencyRules": {
+          "type": "object",
+          "properties": {
+            "ignoreMissing": {
+              "description": "pnpm 将不会打印有关此列表中缺失的对等依赖项的警告。",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allowedVersions": {
+              "description": "对于指定范围的对等依赖项，不会打印未满足的对等依赖项警告。",
+              "type": "object"
+            },
+            "allowAny": {
+              "description": "任何匹配模式的对等依赖项将从任何版本解析，无论“peerDependencies”中指定的范围如何。",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "neverBuiltDependencies": {
+          "description": "要为其构建的依赖项列表。",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "onlyBuiltDependencies": {
+          "description": "允许在安装期间执行的包名称列表。",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "onlyBuiltDependenciesFile": {
+          "description": "指定一个 JSON 文件，其中列出了在 pnpm install 过程中允许运行安装脚本的唯一软件包。",
+          "type": "string"
+        },
+        "ignoredBuiltDependencies": {
+          "description": "在安装期间不应构建的包名称列表。",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowedDeprecatedVersions": {
+          "description": "已弃用的版本列表，这些版本的警告被抑制。",
+          "type": "object"
+        },
+        "patchedDependencies": {
+          "description": "已修补的依赖项列表。",
+          "type": "object"
+        },
+        "allowNonAppliedPatches": {
+          "description": "当为 true 时，如果“patchedDependencies”字段中的某些补丁未应用，安装不会失败。",
+          "type": "boolean"
+        },
+        "allowUnusedPatches": {
+          "description": "当为 true 时，如果“patchedDependencies”字段中的某些补丁未应用，安装不会失败。",
+          "type": "boolean"
+        },
+        "updateConfig": {
+          "type": "object",
+          "properties": {
+            "ignoreDependencies": {
+              "description": "运行“pnpm outdated”或“pnpm update --latest”时应忽略的软件包列表。",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "configDependencies": {
+          "type": "object",
+          "description": "配置依赖项在所有其他类型的依赖项（在 'dependencies'、'devDependencies'、'optionalDependencies' 之前）之前安装。"
+        },
+        "auditConfig": {
+          "type": "object",
+          "properties": {
+            "ignoreCves": {
+              "description": "将被“pnpm audit”忽略的 CVE ID 列表。",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^CVE-\\d{4}-\\d{4,7}$"
+              }
+            },
+            "ignoreGhsas": {
+              "description": "将被“pnpm audit”忽略的 GHSA 代码列表。",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^GHSA(-[23456789cfghjmpqrvwx]{4}){3}$"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "requiredScripts": {
+          "description": "每个项目中必须存在的脚本列表。",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supportedArchitectures": {
+          "description": "指定你希望为其安装可选依赖项的架构，即使它们与运行安装的系统的架构不匹配。",
+          "type": "object",
+          "properties": {
+            "os": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cpu": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "libc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "ignoredOptionalDependencies": {
+          "description": "应跳过安装的可选依赖项列表。",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "executionEnv": {
+          "type": "object",
+          "properties": {
+            "nodeVersion": {
+              "description": "指定项目运行时应使用的确切 Node.js 版本。",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "stackblitz": {
+      "description": "定义项目的 StackBlitz 配置。",
+      "type": "object",
+      "properties": {
+        "installDependencies": {
+          "description": "StackBlitz 在打开项目时自动安装 npm 依赖项。",
+          "type": "boolean"
+        },
+        "startCommand": {
+          "description": "打开项目后在安装 npm 依赖项后执行的终端命令。",
+          "type": [
+            "string",
+            "boolean"
+          ]
+        },
+        "compileTrigger": {
+          "description": "compileTrigger 选项控制编辑器中的文件更改如何写入 WebContainers 内存文件系统。",
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "auto",
+                "keystroke",
+                "save"
+              ]
+            }
+          ]
+        },
+        "env": {
+          "description": "将在每个顶级 shell 进程中设置的默认环境变量的映射。",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "quiltnt": {
+      "description": "定义 QuiltNt 专用 LiteLoaderQQNT 插件模板配置",
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "object",
+          "description": "插件清单配置",
+          "properties": {
+            "manifest_version": {
+              "type": "integer",
+              "description": "插件清单版本, 当前仅支持 4",
+              "enum": [
+                4
+              ],
+              "default": 4
+            },
+            "type": {
+              "type": "string",
+              "description": "插件类型",
+              "enum": [
+                "extension",
+                "theme",
+                "framework"
+              ],
+              "default": "extension"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "插件名称, 留空或填入 `null` 将使用顶层 `name` 字段",
+              "maxLength": 214,
+              "minLength": 1
+            },
+            "slug": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "插件标识, 留空或填入 `null` 将使用顶层 `name` 字段",
+              "maxLength": 214,
+              "minLength": 1,
+              "pattern": "^(?:(?:@(?:[a-z0-9-*~][a-z0-9-*._~]*)?/[a-z0-9-._~])|[a-z0-9-~])[a-z0-9-._~]*$"
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "插件版本, 留空或填入 `null` 将使用顶层 `version` 字段",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "插件描述, 留空或填入 `null` 将使用顶层 `description` 字段"
+            },
+            "icon": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "插件小图标路径"
+            },
+            "thumb": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "插件大图标路径"
+            },
+            "authors": {
+              "type": "array",
+              "description": "插件作者, 留空或填入 `null` 将使用顶层 `author` 和 `contributors` 字段",
+              "items": {
+                "type": "object",
+                "description": "插件作者",
+                "definitions": {
+                  "name": {
+                    "type": "string",
+                    "description": "作者名字"
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "作者链接"
+                  }
+                },
+                "required": [
+                  "name",
+                  "link"
+                ]
+              }
+            },
+            "dependencies": {
+              "description": "插件依赖项",
+              "anyOf": [
+                {
+                  "type": "array",
+                  "description": "插件依赖项标识",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "platform": {
+              "type": "array",
+              "description": "插件支持的平台",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "win32",
+                  "linux",
+                  "darwin"
+                ]
+              },
+              "default": [
+                "win32",
+                "linux",
+                "darwin"
+              ]
+            },
+            "injects": {
+              "description": "插件注入脚本配置",
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "main": {
+                      "type": "string",
+                      "description": "插件主进程注入脚本路径",
+                      "default": "./main.cjs"
+                    },
+                    "preload": {
+                      "type": "string",
+                      "description": "插件预加载进程注入脚本路径",
+                      "default": "./preload.cjs"
+                    },
+                    "renderer": {
+                      "type": "string",
+                      "description": "插件渲染进程注入脚本路径",
+                      "default": "./renderer.mjs"
+                    }
+                  }
+                },
+                {
+                  "type": "string",
+                  "description": "插件注入脚本配置, 将自动从 `tsdown` 配置文件获取",
+                  "const": "tsdown"
+                }
+              ],
+              "default": "tsdown"
+            },
+            "repository": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "插件仓库配置, 留空或填入 `null` 将使用顶级 `repository` 字段",
+              "properties": {
+                "repo": {
+                  "type": "string",
+                  "description": "插件仓库短名称, 例如 `QuiltNT/exclusive_plugin_template`",
+                  "examples": [
+                    "QuiltNT/exclusive_plugin_template"
+                  ]
+                },
+                "branch": {
+                  "type": "string",
+                  "description": "插件仓库分支",
+                  "default": "main"
+                },
+                "release": {
+                  "type": "object",
+                  "description": "插件仓库发布配置",
+                  "properties": {
+                    "tag": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "插件仓库发布标签, 留空或填入 `null`, `latest` 将使用 `version` 字段",
+                      "default": "latest"
+                    },
+                    "tag.v": {
+                      "type": "boolean",
+                      "description": "如果 `tag` 留空或填入 `null`, 标签前是否自动添加 'v'",
+                      "default": false
+                    },
+                    "file": {
+                      "type": "string",
+                      "description": "插件仓库发布文件",
+                      "examples": [
+                        "quilt-exclusive-plugin-template.zip"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "tag.v"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "manifest_version",
+            "type",
+            "injects",
+            "platform"
+          ]
+        }
+      },
+      "required": [
+        "manifest"
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "type": "object",
+      "not": {
+        "required": [
+          "bundledDependencies",
+          "bundleDependencies"
+        ]
+      }
+    },
+    {
+      "type": "object",
+      "not": {
+        "required": [
+          "bundleDependencies"
+        ]
+      },
+      "required": [
+        "bundledDependencies"
+      ]
+    },
+    {
+      "type": "object",
+      "not": {
+        "required": [
+          "bundledDependencies"
+        ]
+      },
+      "required": [
+        "bundleDependencies"
+      ]
+    }
+  ],
+  "$id": "https://json.schemastore.org/package.json"
+}

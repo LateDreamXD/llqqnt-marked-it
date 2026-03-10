@@ -1,0 +1,55 @@
+{
+  "$schema": ".quiltnt/package.schema.json",
+  "name": "quilt-exclusive-plugin-template",
+  "private": true,
+  "version": "0.1.0",
+  "description": "QuiltNt 专用 LiteLoaderQQNT 插件模板",
+  "quiltnt": {
+    "manifest": {
+      "manifest_version": 4,
+      "type": "extension",
+      "name": null,
+      "slug": null,
+      "version": null,
+      "description": null,
+      "icon": null,
+      "thumb": null,
+      "authors": [],
+      "platform": [
+        "win32",
+        "linux",
+        "darwin"
+      ],
+      "injects": "tsdown",
+      "repository": null
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "postbuild": "unrun .quiltnt/postbuild.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QuiltNT/exclusive_plugin_template.git"
+  },
+  "author": "QuiltNT (https://github.com/QuiltNT)",
+  "contributors": [
+    {
+      "name": "晚梦",
+      "email": "xiaozhisans@qq.com",
+      "url": "https://about.latedream.cn"
+    }
+  ],
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/QuiltNT/exclusive_plugin_template/issues"
+  },
+  "homepage": "https://github.com/QuiltNT/exclusive_plugin_template#readme",
+  "devDependencies": {
+    "@llqqntuno/liteloader-types": "^1.4.0",
+    "@types/node": "^25.4.0",
+    "tsdown": "^0.21.1",
+    "typescript": "^5.9.3",
+    "unrun": "^0.2.31"
+  }
+}
