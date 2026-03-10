@@ -4,7 +4,8 @@ import vueConfig from '@llqqntuno/liteloader-web-components-types/vue-conf';
 
 export default defineConfig({
 	deps: {
-		neverBundle: ['electron']
+		neverBundle: ['electron'],
+		alwaysBundle: ['vue', /marked/, /katex/],
 	},
 
 	entry: {
