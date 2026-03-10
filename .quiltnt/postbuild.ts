@@ -53,6 +53,7 @@ if(fs.existsSync(distDir)) {
 
 try {
 	const res = [
+		'node_modules/github-markdown-css/github-markdown.css',
 		'node_modules/katex/dist/fonts',
 		'node_modules/katex/dist/katex.min.css'
 	];

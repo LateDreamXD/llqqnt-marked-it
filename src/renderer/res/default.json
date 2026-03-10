@@ -2,7 +2,7 @@
   "plugin": {
     "handleAnchorClick": true,
     "debounceDelay": 50,
-    "markedClass": "marked",
+    "markedClass": "markdown-body",
     "ignoredClass": "marked-ignore",
     "toggleRawText": false
   },
