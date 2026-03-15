@@ -45,15 +45,31 @@ const debounceRender = debounce(() => {
 		try {
 			// @ts-ignore
 			el.style.backgroundColor = 'transparent';
-			if(el.querySelector('.pic-element') && el.children.length === 1)
-				return;
-			const reply = el.querySelector('.reply-content');
-			const raw = reply? reply.innerHTML.replace(/<.*?>/g, ''):
-				el.innerHTML.replace(/<.*?>/g, '');
-			el.setAttribute('data-raw', raw);
-			const parsed = marked.parse(raw) as string;
-			el.setAttribute('data-parsed', parsed);
-			reply? reply.innerHTML = parsed: el.innerHTML = parsed;
+			el.classList.add(options.plugin.markedClass);
+			const replyTextEls = el.querySelectorAll('.reply-content .text');
+			const textEls = el.querySelectorAll('.text-normal');
+
+			// parse reply text
+			if(replyTextEls.length > 0)
+				replyTextEls.forEach(replyTextEl => {
+					const rawText = replyTextEl.textContent;
+					replyTextEl.setAttribute('data-marked-rawtext', rawText);
+					const parsed = marked.parse(rawText) as string;
+					replyTextEl.setAttribute('data-marked-parsed', parsed);
+					replyTextEl.innerHTML = parsed;
+				});
+
+			// parse msg text
+			if(textEls.length > 0)
+				textEls.forEach(textEl => {
+					const rawText = textEl.textContent;
+					textEl.setAttribute('data-marked-rawtext', rawText);
+					const parsed = marked.parse(rawText) as string;
+					textEl.setAttribute('data-marked-parsed', parsed);
+					textEl.innerHTML = parsed;
+				});
+
+			// handle anchor click
 			if(options.plugin.handleAnchorClick)
 				el.querySelectorAll('a').forEach(a => {
 					a.style.color = '#00bbff';
@@ -62,26 +78,41 @@ const debounceRender = debounce(() => {
 						a.href && LiteLoader.api.openExternal(a.href);
 					});
 				});
+
+			// toggle raw text
 			if(options.plugin.toggleRawText) {
 				const rawBtn = document.createElement('button');
 				rawBtn.textContent = 'RawText';
 				rawBtn.addEventListener('click', () => {
 					rawBtn.textContent = rawBtn.hasAttribute('data-display-raw')? 'Markdown': 'RawText';
-					el.innerHTML = (rawBtn.hasAttribute('data-display-raw')?
-					el.getAttribute('data-parsed'):
-					el.getAttribute('data-raw')) || 'LOST DATA!';
-					rawBtn.toggleAttribute('data-display-raw');
+
+					// toggle reply text
+					if(replyTextEls.length > 0)
+						replyTextEls.forEach(replyTextEl => {
+							replyTextEl.innerHTML = (rawBtn.hasAttribute('data-display-raw')?
+							replyTextEl.getAttribute('data-marked-rawtext'):
+							replyTextEl.getAttribute('data-marked-parsed')) || 'LOST DATA!';
+						});
+
+					// toggle msg text
+					if(textEls.length > 0)
+						textEls.forEach(textEl => {
+							textEl.innerHTML = (rawBtn.hasAttribute('data-display-raw')?
+							textEl.getAttribute('data-marked-rawtext'):
+							textEl.getAttribute('data-marked-parsed')) || 'LOST DATA!';
+						});
 				});
 				rawBtn.style.cssText = 'position: absolute; left: 0; bottom: 0; z-index: 1000; display: none;';
-				el.addEventListener('mouseenter', () => {
+
+				el.parentElement!.addEventListener('mouseenter', () => {
 					rawBtn.style.display = 'block';
 				});
-				el.addEventListener('mouseleave', () => {
+				el.parentElement!.addEventListener('mouseleave', () => {
 					rawBtn.style.display = 'none';
 				});
-				el.appendChild(rawBtn);
+
+				el.parentElement!.appendChild(rawBtn);
 			}
-			el.classList.add(options.plugin.markedClass);
 		} catch(err) {
 			console.error('[marked-it] error while parsing message content:', err);
 		}
@@ -106,6 +137,10 @@ const init = () => {
 }
 
 const onHashChange = () => {
+	if(location.hash.startsWith('#/forward')) {
+		init();
+		return;
+	}
 	switch(location.hash) {
 		case '#/main/message':
 		case '#/chat':
@@ -121,7 +156,8 @@ const onHashChange = () => {
 }
 
 LiteLoader.api.config.get('marked-it', defaultOptions).then(config => {
-	Object.assign(options, config);
+	if(config)
+		Object.assign(options, config);
 }).then(() => {
 	marked.use(options.marked);
 	marked.use(katex(options.katex));
