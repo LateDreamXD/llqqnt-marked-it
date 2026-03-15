@@ -90,32 +90,66 @@ onBeforeMount(async() => {
 				</setting-item>
 				<setting-item>
 					<setting-text>防抖延迟</setting-text>
-					<input class="q-input__inner" v-model="options.plugin.debounceDelay" type="number"
+					<input v-model="options.plugin.debounceDelay" type="number"
 						min="0" max="5000" step="10" @change="saveOptions" />
 				</setting-item>
 				<setting-item>
 					<setting-text>渲染后添加的类名</setting-text>
-					<input class="q-input" v-model="options.plugin.markedClass"
+					<input v-model="options.plugin.markedClass"
 						@change="saveOptions" />
 				</setting-item>
 				<setting-item>
 					<setting-text>忽略的类名</setting-text>
-					<input class="q-input" v-model="options.plugin.ignoredClass"
+					<input v-model="options.plugin.ignoredClass"
 						@change="saveOptions" />
 				</setting-item>
 			</setting-list>
 		</setting-panel>
 	</setting-section>
 
-	<setting-section data-title="Marked 配置">
+	<setting-section class="setting-textarea" data-title="Marked 配置">
 		<setting-link data-value="https://marked.js.org/using_advanced#options" />
-		<textarea class="q-textarea" :value="JSON.stringify(options.marked, null, 2)"
+		<textarea :value="JSON.stringify(options.marked, null, 2)"
 			@change="textareaChange($event, 'marked')" />
 	</setting-section>
 
-	<setting-section data-title="KaTeX 配置">
+	<setting-section class="setting-textarea" data-title="KaTeX 配置">
 		<setting-link data-value="https://katex.org/docs/options" />
-		<textarea class="q-textarea" :value="JSON.stringify(options.katex, null, 2)"
+		<textarea :value="JSON.stringify(options.katex, null, 2)"
 			@change="textareaChange($event, 'katex')" />
 	</setting-section>
 </template>
+
+<style lang="scss">
+input {
+	color: #000;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	width: fit-content;
+	@media (prefers-color-scheme: dark) {
+		color: #fff;
+		background-color: #333;
+		border-color: #555;
+	}
+}
+.setting-textarea {
+	display: flex;
+	flex-direction: column;
+	* {
+		display: block;
+	}
+	textarea {
+		color: #000;
+		background-color: #eee;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		width: 100%;
+		resize: vertical;
+		@media (prefers-color-scheme: dark) {
+			color: #fff;
+			background-color: #333;
+			border-color: #555;
+		}
+	}
+}
+</style>

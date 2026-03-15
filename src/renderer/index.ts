@@ -13,6 +13,8 @@ const options = reactive(defaultOptions);
 
 export const onSettingWindowCreated = (view: HTMLDivElement) => {
 	// 初始化 LiteLoader 设置页
+	const root = LiteLoader.plugins['marked-it'].path.plugin.replace(/\\/g, '/');
+	loadCSS(`local:///${root}/style.css`);
 	const app = createApp(Settings, { versions: {
 		plugin: packageJson.version,
 		marked: markedVersion,

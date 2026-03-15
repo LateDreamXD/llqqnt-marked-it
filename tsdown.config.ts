@@ -1,6 +1,7 @@
 import { defineConfig } from 'tsdown';
 import vue from 'unplugin-vue/rolldown';
 import vueConfig from '@llqqntuno/liteloader-web-components-types/vue-conf';
+import '@tsdown/css';
 
 export default defineConfig({
 	deps: {
@@ -32,5 +33,7 @@ export default defineConfig({
 	dts: false,
 
 	// 压缩输出文件
-	minify: true
+	minify: true,
+
+	tsconfig: 'tsconfig.app.json'
 });

@@ -13,7 +13,7 @@
       "version": null,
       "description": null,
       "icon": "./icon.svg",
-      "thumb": null,
+      "thumb": "./thumb.svg",
       "authors": [],
       "platform": [
         "win32",
@@ -41,11 +41,13 @@
   "devDependencies": {
     "@llqqntuno/liteloader-types": "^1.4.0",
     "@llqqntuno/liteloader-web-components-types": "^1.4.0",
-    "@types/node": "^25.4.0",
-    "tsdown": "^0.21.1",
+    "@tsdown/css": "^0.21.3",
+    "@types/node": "^25.5.0",
+    "sass-embedded": "^1.98.0",
+    "tsdown": "^0.21.3",
     "typescript": "^5.9.3",
     "unplugin-vue": "^7.1.1",
-    "unrun": "^0.2.31"
+    "unrun": "^0.2.32"
   },
   "dependencies": {
     "github-markdown-css": "^5.9.0",
