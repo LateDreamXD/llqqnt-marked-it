@@ -15,11 +15,11 @@ importers:
         specifier: ^0.16.44
         version: 0.16.44
       marked:
-        specifier: ^17.0.5
-        version: 17.0.5
+        specifier: ^17.0.6
+        version: 17.0.6
       marked-katex-extension:
         specifier: ^5.1.7
-        version: 5.1.7(katex@0.16.44)(marked@17.0.5)
+        version: 5.1.7(katex@0.16.44)(marked@17.0.6)
       vue:
         specifier: ^3.5.31
         version: 3.5.31(typescript@5.9.3)
@@ -676,8 +676,8 @@ packages:
       katex: '>=0.16 <0.17'
       marked: '>=4 <18'
 
-  marked@17.0.5:
-    resolution: {integrity: sha512-6hLvc0/JEbRjRgzI6wnT2P1XuM1/RrrDEX0kPt0N7jGm1133g6X7DlxFasUIx+72aKAr904GTxhSLDrd5DIlZg==}
+  marked@17.0.6:
+    resolution: {integrity: sha512-gB0gkNafnonOw0obSTEGZTT86IuhILt2Wfx0mWH/1Au83kybTayroZ/V6nS25mN7u8ASy+5fMhgB3XPNrOZdmA==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -1519,12 +1519,12 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  marked-katex-extension@5.1.7(katex@0.16.44)(marked@17.0.5):
+  marked-katex-extension@5.1.7(katex@0.16.44)(marked@17.0.6):
     dependencies:
       katex: 0.16.44
-      marked: 17.0.5
+      marked: 17.0.6
 
-  marked@17.0.5: {}
+  marked@17.0.6: {}
 
   nanoid@3.3.11: {}
 
