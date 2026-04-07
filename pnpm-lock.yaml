@@ -12,14 +12,14 @@ importers:
         specifier: ^5.9.0
         version: 5.9.0
       katex:
-        specifier: ^0.16.44
-        version: 0.16.44
+        specifier: ^0.16.45
+        version: 0.16.45
       marked:
         specifier: ^17.0.6
         version: 17.0.6
       marked-katex-extension:
         specifier: ^5.1.7
-        version: 5.1.7(katex@0.16.44)(marked@17.0.6)
+        version: 5.1.7(katex@0.16.45)(marked@17.0.6)
       vue:
         specifier: ^3.5.32
         version: 3.5.32(typescript@5.9.3)
@@ -589,8 +589,8 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  katex@0.16.44:
-    resolution: {integrity: sha512-EkxoDTk8ufHqHlf9QxGwcxeLkWRR3iOuYfRpfORgYfqc8s13bgb+YtRY59NK5ZpRaCwq1kqA6a5lpX8C/eLphQ==}
+  katex@0.16.45:
+    resolution: {integrity: sha512-pQpZbdBu7wCTmQUh7ufPmLr0pFoObnGUoL/yhtwJDgmmQpbkg/0HSVti25Fu4rmd1oCR6NGWe9vqTWuWv3GcNA==}
     hasBin: true
 
   lightningcss-android-arm64@1.32.0:
@@ -1460,7 +1460,7 @@ snapshots:
 
   jsesc@3.1.0: {}
 
-  katex@0.16.44:
+  katex@0.16.45:
     dependencies:
       commander: 8.3.0
 
@@ -1519,9 +1519,9 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  marked-katex-extension@5.1.7(katex@0.16.44)(marked@17.0.6):
+  marked-katex-extension@5.1.7(katex@0.16.45)(marked@17.0.6):
     dependencies:
-      katex: 0.16.44
+      katex: 0.16.45
       marked: 17.0.6
 
   marked@17.0.6: {}
