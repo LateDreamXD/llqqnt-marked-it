@@ -42,7 +42,7 @@
     "@llqqntuno/liteloader-types": "^1.4.0",
     "@llqqntuno/liteloader-web-components-types": "^1.4.0",
     "@tsdown/css": "^0.21.3",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "sass-embedded": "^1.98.0",
     "tsdown": "^0.21.3",
     "typescript": "^5.9.3",
