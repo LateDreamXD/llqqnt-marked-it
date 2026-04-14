@@ -18,8 +18,8 @@ importers:
         specifier: ^17.0.6
         version: 17.0.6
       marked-katex-extension:
-        specifier: ^5.1.7
-        version: 5.1.7(katex@0.16.45)(marked@17.0.6)
+        specifier: ^5.1.8
+        version: 5.1.8(katex@0.16.45)(marked@17.0.6)
       vue:
         specifier: ^3.5.32
         version: 3.5.32(typescript@5.9.3)
@@ -670,11 +670,11 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  marked-katex-extension@5.1.7:
-    resolution: {integrity: sha512-CVFzrqwpXGVaHByqcVvO/JfzW/OMWrAF3pEfNYNIruzBzM64moANSHapCg1qbzEN+NGf5unHwkMfwJIXHzyDAw==}
+  marked-katex-extension@5.1.8:
+    resolution: {integrity: sha512-TsV9OCHHDjVBf4IH0RSjLs4Eqsjj8HGfmVCKlimrS391EtBBxzXj2gBYdF9tY7f7oXu9tb1kHV86ExJsG3iMhw==}
     peerDependencies:
       katex: '>=0.16 <0.17'
-      marked: '>=4 <18'
+      marked: '>=4 <19'
 
   marked@17.0.6:
     resolution: {integrity: sha512-gB0gkNafnonOw0obSTEGZTT86IuhILt2Wfx0mWH/1Au83kybTayroZ/V6nS25mN7u8ASy+5fMhgB3XPNrOZdmA==}
@@ -1523,7 +1523,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  marked-katex-extension@5.1.7(katex@0.16.45)(marked@17.0.6):
+  marked-katex-extension@5.1.8(katex@0.16.45)(marked@17.0.6):
     dependencies:
       katex: 0.16.45
       marked: 17.0.6
