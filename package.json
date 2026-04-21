@@ -47,7 +47,7 @@
     "tsdown": "^0.21.3",
     "typescript": "^5.9.3",
     "unplugin-vue": "^7.1.1",
-    "unrun": "^0.2.34"
+    "unrun": "^0.2.36"
   },
   "dependencies": {
     "github-markdown-css": "^5.9.0",
